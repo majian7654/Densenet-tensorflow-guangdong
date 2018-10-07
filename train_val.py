@@ -134,17 +134,16 @@ def train():
                 if step == iteration :
                     train_loss /= iteration # average loss
                     train_acc /= iteration # average accuracy
-                #    train_summary = tf.Summary(value=[tf.Summary.Value(tag='train_loss', simple_value=train_loss),
-                #                                      tf.Summary.Value(tag='train_accuracy', simple_value=train_acc)])
-                #    test_acc, test_loss, test_summary = Evaluate(sess)
-                #    summary_writer.add_summary(summary=train_summary, global_step=epoch)
-                #    summary_writer.add_summary(summary=test_summary, global_step=epoch)
-                #    summary_writer.flush()
-                #    line = "epoch: %d/%d, train_loss: %.4f, train_acc: %.4f, test_loss: %.4f, test_acc: %.4f \n" % (
-                #        epoch, total_epochs, train_loss, train_acc, test_loss, test_acc)
-                #    print(line)
-                #    with open('logs.txt', 'a') as f :
-                #        f.write(line)
+                    summary_train_loss = tf.summary.scalar('train/loss', train_loss)
+                    summary_train_acc = tf.summary.scalar('train/acc', train_acc)
+                    summary_writer.add_summary(summary=summary_train_loss, global_step=epoch)
+                    summary_writer.add_summary(summary=summary_train_acc, global_step=epoch)
+                    summary_writer.flush()
+                    line = "epoch: %d/%d, train_loss: %.4f, train_acc: %.4f \n" % (
+                        epoch, total_epochs, train_loss, train_acc )
+                    print(line)
+                    with open('logs.txt', 'a') as f :
+                        f.write(line)
             saver.save(sess=sess, save_path='./model/dense.ckpt')
 
 
