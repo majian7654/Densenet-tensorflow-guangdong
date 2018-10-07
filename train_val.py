@@ -57,7 +57,10 @@ def Evaluate(sess):
 
 
 def train():
+    
+    #prepare data
     image_batches, label_batches  = input_data.read_lvData('./data/label.csv')
+    
     # image_size = 32, img_channels = 3, class_num = 10 in cifar10
     x = tf.placeholder(tf.float32, shape=[None, image_size, image_size, img_channels])
     label = tf.placeholder(tf.float32, shape=[None, class_num])
@@ -84,6 +87,9 @@ def train():
     correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(label, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+    tf.summary.image('input', x, 2)
+    summary_op = tf.summary.merge_all()
+
     saver = tf.train.Saver(tf.global_variables())
 
     with tf.Session() as sess:
@@ -103,10 +109,6 @@ def train():
             if epoch == (total_epochs * 0.5) or epoch == (total_epochs * 0.75):
                 epoch_learning_rate = epoch_learning_rate / 10
 
-            pre_index = 0
-            train_acc = 0.0
-            train_loss = 0.0
-
             for step in range(1, iteration + 1):
                 image_batch,label_batch = sess.run([image_batches, label_batches])
                 train_feed_dict = {
@@ -116,25 +118,27 @@ def train():
                     training_flag : True
                 }
                 _, batch_loss = sess.run([train, cost], feed_dict=train_feed_dict)
-                batch_acc = accuracy.eval(feed_dict=train_feed_dict)
-                train_loss += batch_loss
-                train_acc += batch_acc
-                pre_index += batch_size
+                
+                batch_acc = sess.run(accuracy,feed_dict=train_feed_dict )
+                print(batch_acc)
+                summary_str = sess.run(summary_op, feed_dict=train_feed_dict)
+                
+                summary_writer.add_summary(summary_str, step)
 
-                if step == iteration :
-                    train_loss /= iteration # average loss
-                    train_acc /= iteration # average accuracy
-                    train_summary = tf.Summary(value=[tf.Summary.Value(tag='train_loss', simple_value=train_loss),
-                                                      tf.Summary.Value(tag='train_accuracy', simple_value=train_acc)])
-                    test_acc, test_loss, test_summary = Evaluate(sess)
-                    summary_writer.add_summary(summary=train_summary, global_step=epoch)
-                    summary_writer.add_summary(summary=test_summary, global_step=epoch)
-                    summary_writer.flush()
-                    line = "epoch: %d/%d, train_loss: %.4f, train_acc: %.4f, test_loss: %.4f, test_acc: %.4f \n" % (
-                        epoch, total_epochs, train_loss, train_acc, test_loss, test_acc)
-                    print(line)
-                    with open('logs.txt', 'a') as f :
-                        f.write(line)
+                #if step == iteration :
+                #    train_loss /= iteration # average loss
+                #    train_acc /= iteration # average accuracy
+                #    train_summary = tf.Summary(value=[tf.Summary.Value(tag='train_loss', simple_value=train_loss),
+                #                                      tf.Summary.Value(tag='train_accuracy', simple_value=train_acc)])
+                #    test_acc, test_loss, test_summary = Evaluate(sess)
+                #    summary_writer.add_summary(summary=train_summary, global_step=epoch)
+                #    summary_writer.add_summary(summary=test_summary, global_step=epoch)
+                #    summary_writer.flush()
+                #    line = "epoch: %d/%d, train_loss: %.4f, train_acc: %.4f, test_loss: %.4f, test_acc: %.4f \n" % (
+                #        epoch, total_epochs, train_loss, train_acc, test_loss, test_acc)
+                #    print(line)
+                #    with open('logs.txt', 'a') as f :
+                #        f.write(line)
             saver.save(sess=sess, save_path='./model/dense.ckpt')
 
 
