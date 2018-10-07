@@ -14,18 +14,19 @@ nesterov_momentum = 0.9
 weight_decay = 1e-4
 
 # Label & batch_size
-batch_size = 8
+batch_size = 32
+iteration = 63
 
-iteration = 5
+#num_data = 2000
 # batch_size * iteration = data_set_number
 
-image_size = 32
+image_size_width = 256
+image_size_height = 192
+
 img_channels = 3
 class_num = 12
 
-test_iteration = 10
-
-total_epochs = 300
+total_epochs = 30
 def Evaluate(sess):
     test_acc = 0.0
     test_loss = 0.0
@@ -62,7 +63,7 @@ def train():
     image_batches, label_batches  = input_data.read_lvData('./data/label.csv')
     
     # image_size = 32, img_channels = 3, class_num = 10 in cifar10
-    x = tf.placeholder(tf.float32, shape=[None, image_size, image_size, img_channels])
+    x = tf.placeholder(tf.float32, shape=[None, image_size_height, image_size_width, img_channels])
     label = tf.placeholder(tf.float32, shape=[None, class_num])
     training_flag = tf.placeholder(tf.bool)
     learning_rate = tf.placeholder(tf.float32, name='learning_rate')
@@ -88,6 +89,8 @@ def train():
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     tf.summary.image('input', x, 2)
+    tf.summary.scale('acc:', accuracy)
+
     summary_op = tf.summary.merge_all()
 
     saver = tf.train.Saver(tf.global_variables())
@@ -120,7 +123,6 @@ def train():
                 _, batch_loss = sess.run([train, cost], feed_dict=train_feed_dict)
                 
                 batch_acc = sess.run(accuracy,feed_dict=train_feed_dict )
-                print(batch_acc)
                 summary_str = sess.run(summary_op, feed_dict=train_feed_dict)
                 
                 summary_writer.add_summary(summary_str, step)

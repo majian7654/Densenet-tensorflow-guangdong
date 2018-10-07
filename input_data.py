@@ -156,8 +156,8 @@ def read_lvData(file_csv, is_train=True, batch_size=32, shuffle=False):
     """
 
     #dataset info
-    img_width = 32
-    img_height = 32
+    img_width = 256
+    img_height = 192
     img_channel = 3
     N_CLASSES = 12
 
