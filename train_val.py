@@ -111,7 +111,8 @@ def train():
         for epoch in range(1, total_epochs + 1):
             if epoch == (total_epochs * 0.5) or epoch == (total_epochs * 0.75):
                 epoch_learning_rate = epoch_learning_rate / 10
-
+            train_loss = 0
+            train_acc = 0
             for step in range(1, iteration + 1):
                 image_batch,label_batch = sess.run([image_batches, label_batches])
                 train_feed_dict = {
@@ -126,10 +127,13 @@ def train():
                 summary_str = sess.run(summary_op, feed_dict=train_feed_dict)
                 
                 summary_writer.add_summary(summary_str, step)
+                
+                train_loss += batch_loss
+                train_acc += batch_acc
 
-                #if step == iteration :
-                #    train_loss /= iteration # average loss
-                #    train_acc /= iteration # average accuracy
+                if step == iteration :
+                    train_loss /= iteration # average loss
+                    train_acc /= iteration # average accuracy
                 #    train_summary = tf.Summary(value=[tf.Summary.Value(tag='train_loss', simple_value=train_loss),
                 #                                      tf.Summary.Value(tag='train_accuracy', simple_value=train_acc)])
                 #    test_acc, test_loss, test_summary = Evaluate(sess)
