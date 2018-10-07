@@ -72,10 +72,7 @@ class lvData:
 
 
 if __name__=='__main__':
-    #dalz = dataAnalyze()
-    #dalz.drawPie()
-    #dalz.drawBar()
     data = lvData()
     train_x, train_y, val_x, val_y = data.prepare_data()
     print(val_x)
-#    data.drawPie()
+    data.drawPie()
