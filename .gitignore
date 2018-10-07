@@ -1,4 +1,6 @@
 .DS_Store
 data/guangdong*
+!data/guangdong_bar.jpg
+!data/guangdong_pie.jpg
 logs/*
 model/*
