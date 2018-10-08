@@ -89,7 +89,7 @@ def train():
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     tf.summary.image('input', x, 2)
-    tf.summary.scale('acc:', accuracy)
+    tf.summary.scalar('acc:', accuracy)
 
     summary_op = tf.summary.merge_all()
 
