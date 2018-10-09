@@ -6,6 +6,7 @@ import numpy as np
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import config
 
 def read_cifar10(data_dir, is_train, batch_size, shuffle):
     """
@@ -156,10 +157,10 @@ def read_lvData(file_csv, is_train=True, batch_size=32, shuffle=False):
     """
 
     #dataset info
-    img_width = 256
-    img_height = 192
-    img_channel = 3
-    N_CLASSES = 12
+    img_width = config.image_size_width 
+    img_height = config.image_size_height
+    img_channel = config.img_channels
+    N_CLASSES = config.class_num
 
     data = pd.read_csv(file_csv)
     #stratify 分层抽样e

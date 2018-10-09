@@ -1,6 +1,7 @@
 import tensorflow as tf
 import input_data
 from densenet import DenseNet
+import config
 
 # Hyperparameter
 growth_k = 24
@@ -14,17 +15,17 @@ nesterov_momentum = 0.9
 weight_decay = 1e-4
 
 # Label & batch_size
-batch_size = 32
-iteration = 63
+batch_size = config.batch_size
+iteration = 2000 / batch_size
 
 #num_data = 2000
 # batch_size * iteration = data_set_number
 
-image_size_width = 256
-image_size_height = 192
+image_size_width = config.image_size_width
+image_size_height = config.image_size_height 
 
-img_channels = 3
-class_num = 12
+img_channels = config.img_channels
+class_num = config.class_num
 
 total_epochs = 30
 def Evaluate(sess):
